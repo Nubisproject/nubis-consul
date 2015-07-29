@@ -9,10 +9,10 @@ output "discovery" {
 output "acl_bucket" {
   value = "${aws_s3_bucket.consul_acl.id}"
 }
- 
+
 # Configure the Consul provider
 provider "consul" {
-    address = "${aws_route53_record.ui.name}:80"
+    address = "ui.${var.region}.${var.domain}:80"
     datacenter = "${var.region}"
     scheme = "http"
 }
