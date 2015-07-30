@@ -81,3 +81,24 @@ variable "shared_services_security_group_id" {
   description = "ID of that SG"
 }
 
+variable "master_acl_token" {
+  description = "Master ACL Token (use uuidgen)"
+}
+
+variable "acl_down_policy" {
+  description = "Policy for when ACL master is down"
+  default = "extend-cache"
+}
+
+variable "acl_default_policy" {
+  description = "Default ACL action for anonymous users"
+  default = "allow"
+}
+
+variable "manage_iam" {
+  description = "IAM roles should be managed in which region"
+  default = {
+    us-east-1 = "1"
+    us-west-2 = "0"
+  }
+}

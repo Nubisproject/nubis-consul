@@ -15,3 +15,4 @@ ssl_cert = "consul.pem"
 internet_security_group_id = "sg-XXXXXXXX"
 shared_services_security_group_id = "sg-XXXXXXXX"
 https_cert_arn = "arn:aws:iam::xxxxx"
+master_acl_token = "AAAAAAAA-BBBB-CCCC-DDDD-EEEEFFFF0000" # use uuidgen
