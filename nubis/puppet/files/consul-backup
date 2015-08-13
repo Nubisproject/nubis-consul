@@ -1,0 +1,39 @@
+#!/bin/bash
+# Simple script that will backup consul
+
+# Check pre-reqs
+hash jq 2>/dev/null || echo "Please install jq to use this tool. https://github.com/stedolan/jq"
+hash aws 2>/dev/null || echo "Please install the AWS CLI API to use this tool. https://aws.amazon.com/cli/"
+hash curl 2>/dev/null || echo "Please install curl"
+
+# Logging
+LOGGER_BIN='/usr/bin/logger'
+LOGGER="$LOGGER_BIN --stderr --priority local7.info --tag consul-backup"
+
+# Get userdata
+eval `curl -s -fq http://169.254.169.254/latest/user-data`
+INSTANCE_ID=$(curl -s -fq http://169.254.169.254/latest/meta-data/instance-id)
+REGION=`curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq '.region' -r`
+BACKUP_BUCKET="nubis-${NUBIS_PROJECT}-backupbucket-${NUBIS_ENVIRONMENT}-${REGION}"
+
+# How do we want to represent the backup file
+DATE_STAMP=$(date +\%Y\%m\%d_\%H:\%M:\%S)
+BACKUP_FILE_NAME="consul_backup.${INSTANCE_ID}.${DATE_STAMP}.json"
+
+# Only 1 member of the cluster needs to run this
+# if you are not the leader then just forget about it
+consul-do consul-backup-${NUBIS_PROJECT} ${INSTANCE_ID} || exit
+
+# Backup to temporary file
+BACKUP_FILE=`mktemp`
+trap "rm -f $BACKUP_FILE" EXIT
+
+# We probably can do a little better here to check if the backup actually worked
+$LOGGER "Backing up KV store to $BACKUP_FILE"
+consulate kv backup -f $BACKUP_FILE
+
+# Copy to s3
+if [[ -s $BACKUP_FILE ]]; then
+    $LOGGER "Copying ${BACKUP_FILE_NAME} to s3 (BucketName: ${BACKUP_BUCKET})"
+    aws s3 cp $BACKUP_FILE s3://${BACKUP_BUCKET}/${BACKUP_FILE_NAME} --region ${REGION}
+fi

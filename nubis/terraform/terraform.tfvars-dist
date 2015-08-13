@@ -9,6 +9,7 @@ ami      = "ami-XXXXXXXX"
 zone_id  = "AABBCCDDEEFF0011"
 public   = 0
 vpc_id = "vpc-XXXXXXXX"
+environment = "sandbox"
 domain   = "consul.sandbox.nubis.allizom.org"
 ssl_key  = "consul.key"
 ssl_cert = "consul.pem"

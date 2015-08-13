@@ -15,3 +15,20 @@ class { 'consul':
       },
   }
 }
+
+# Install consul backup script and create cron for it
+file { '/usr/local/sbin/consul-backup':
+    ensure => file,
+    owner  => root,
+    group  => root,
+    mode   => '0755',
+    source => 'puppet:///nubis/files/consul-backup',
+}
+
+cron::hourly { 'consul_backup':
+    minute      => '0',
+    user        => 'root',
+    command     => '/usr/local/sbin/consul-backup > /dev/null > 2>&1',
+    environment => [ 'PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"', 'SHELL=/bin/bash' ],
+    require     => File['/usr/local/sbin/consul-backup']
+}

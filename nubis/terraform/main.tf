@@ -194,6 +194,17 @@ resource "aws_route53_record" "ui" {
    records = ["dualstack.${aws_elb.consul.dns_name}"]
 }
 
+resource "aws_s3_bucket" "consul_backups" {
+    bucket = "nubis-${var.project}-backupbucket-${var.environment}-${var.region}"
+    acl = "private"
+
+    tags = {
+        Name = "nubis-${var.project}-backupbucket-${var.environment}-${var.region}"
+        Region = "${var.region}"
+        Environment = "${var.environment}"
+    }
+}
+
 resource "aws_iam_instance_profile" "consul" {
     count = "${lookup(var.manage_iam, var.region)}"
     name = "${var.project}"
@@ -252,3 +263,31 @@ resource "aws_iam_role_policy" "consul" {
 EOF
 }
 
+resource "aws_iam_role_policy" "consul_backups" {
+    count   = "${lookup(var.manage_iam, var.region)}"
+    name    = "${var.project}-backups"
+    role    = "${aws_iam_role.consul.id}"
+    policy  = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": [ "arn:aws:s3:::${aws_s3_bucket.consul_backups.id}" ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+            ],
+            "Resource": [ "arn:aws:s3:::${aws_s3_bucket.consul_backups.id}/*" ]
+        }
+    ]
+}
+EOF
+}
