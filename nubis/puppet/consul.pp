@@ -66,7 +66,7 @@ cron::job {
     month       => '*',
     weekday     => '*',
     user        => 'root',
-    command     => '/usr/local/bin/consul-asg-join',
+    command     => '/usr/local/bin/consul-asg-join >/dev/null',
     environment => [ 'PATH="/usr/local/bin:/usr/bin:/bin"', 'SHELL=/bin/bash' ],
 }
 
