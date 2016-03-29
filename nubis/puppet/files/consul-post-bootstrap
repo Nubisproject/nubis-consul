@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 export PATH=/usr/local/bin:$PATH
 
 USER_DATA=$(curl -fqs http://169.254.169.254/latest/user-data)
