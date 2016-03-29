@@ -25,3 +25,15 @@ if [ "$PLATFORM_ACL" != "" ]; then
       credstash --region "$REGION" put -a "nubis/$NUBIS_ENVIRONMENT/consul/acl_token" "$PLATFORM_ACL" "region=$REGION" "environment=$NUBIS_ENVIRONMENT" "service=nubis"
     fi
 fi
+
+# XXX: Need an agnostic way to do this
+# Datadog
+DATADOG_API_KEY=$(nubis-secret get datadog/api_key)
+if [ "$DATADOG_API_KEY" != "" ]; then
+  echo "Injecting Datadog API key"
+  curl -fqs -X PUT -d "$NOW" "http://localhost:8500/v1/kv/environments/$NUBIS_ENVIRONMENT/global/datadog/config/api_key?token=$MASTER_ACL_TOKEN"
+fi
+
+# Finalize by creating a well-known KV
+NOW=$(date '+%s')
+curl -fqs -X PUT -d "$NOW" "http://localhost:8500/v1/kv/consul-ready?token=$MASTER_ACL_TOKEN"
