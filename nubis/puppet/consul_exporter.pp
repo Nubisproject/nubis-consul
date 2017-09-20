@@ -1,5 +1,5 @@
-$consul_exporter_version = '0.2.0'
-$consul_exporter_url = "https://github.com/prometheus/consul_exporter/releases/download/${consul_exporter_version}/consul_exporter-${consul_exporter_version}.linux-amd64.tar.gz"
+$consul_exporter_version = '0.3.0'
+$consul_exporter_url = "https://github.com/prometheus/consul_exporter/releases/download/v${consul_exporter_version}/consul_exporter-${consul_exporter_version}.linux-amd64.tar.gz"
 
 notice ("Grabbing consul_exporter ${consul_exporter_version}")
 staging::file { "consul_exporter.${consul_exporter_version}.tar.gz":

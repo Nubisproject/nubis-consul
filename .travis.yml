@@ -16,4 +16,4 @@ script:
 - nubis/travis/run-checks
 notifications:
   slack:
-    secure: GvXKv17s8B7fxnfHvSg8iQr4LQLsC461bydyA1syy6QexZCl6VIxyVoxBKTgxzvj0c7qCEZHQeUDGg6TumS14dcWaBI0yAQI5usR4g423nsHB7gNC+hLqcnkhXQLHg/kA84HrvzZ+adYPhe8Ywhiy6lvXGj7W4sxVkqQxCzAYwI=
+    secure: GvNKLrsql6mgQPP1Gvwgd3IBvN2d+DKNGmFwhL9eiwWQncOlDZTNMnrG6+6D3sN1iTuvrUiWzefPGzRl+mBnO+63VhpWW0AOsjuVq1U+NPxUisbJMYukyN70uwMG8ZeT4BrUWLb4W3e7mtnoUwcH++pgsuwp45Kd7AKj32bB9KU=

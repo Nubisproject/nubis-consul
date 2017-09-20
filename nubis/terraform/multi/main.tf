@@ -3,15 +3,13 @@ provider "aws" {
   region  = "${var.aws_region}"
 }
 
-data "atlas_artifact" "nubis-consul" {
-  count = "${var.enabled}"
+module "consul-image" {
+  source = "github.com/nubisproject/nubis-terraform///images?ref=develop"
 
-  name = "nubisproject/nubis-consul"
-  type = "amazon.image"
+  region  = "${var.aws_region}"
+  version = "${var.nubis_version}"
+  project = "nubis-consul"
 
-  metadata {
-    project_version = "${var.nubis_version}"
-  }
 }
 
 resource "aws_launch_configuration" "consul" {
@@ -27,7 +25,7 @@ resource "aws_launch_configuration" "consul" {
   }
 
   name_prefix = "${var.project}-${element(split(",",var.environments), count.index)}-${var.aws_region}-"
-  image_id = "${data.atlas_artifact.nubis-consul.metadata_full["region-${var.aws_region}"]}"
+  image_id = "${module.consul-image.image_id}"
 
   instance_type        = "t2.nano"
   key_name             = "${var.key_name}"
